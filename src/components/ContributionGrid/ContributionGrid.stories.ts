@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { ContributionGrid } from './ContributionGrid';
 // Import the function from the JS file (make sure your build setup allows this)
-// @ts-ignore - Allow importing JS in TS for story data
 function generateDemoParticipants(count = 200) {
     const names = ["Ana", "Luis", "Carlos", "Maria", "Juan", "Elena", "Pedro", "Sofia", "Miguel", "Lucia"];
     const participants = [];
