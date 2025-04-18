@@ -1,15 +1,22 @@
 import { LitElement, html, css } from 'lit';
 
 export class WinnerModal extends LitElement {
-  static properties = {
-    show: { type: Boolean, reflect: true },
-    winnerName: { type: String, attribute: 'winner-name' },
-    winnerAvatar: { type: String, attribute: 'winner-avatar' },
-    titleText: { type: String, attribute: 'title-text' },
-    winnerLabel: { type: String, attribute: 'winner-label' }
-  };
+    static properties = {
+        show: { type: Boolean, reflect: true },
+        winnerName: { type: String, attribute: 'winner-name' },
+        winnerAvatar: { type: String, attribute: 'winner-avatar' },
+        titleText: { type: String, attribute: 'title-text' },
+        winnerLabel: { type: String, attribute: 'winner-label' }
+    };
 
-  static styles = css`
+    // Define property types
+    show: boolean = false;
+    winnerName: string = 'Desconocido';
+    winnerAvatar: string = 'https://placehold.co/100x100/cccccc/ffffff?text=Avatar';
+    titleText: string = '¡Felicidades!';
+    winnerLabel: string = 'El ganador es:';
+
+    static styles = css`
     :host {
       font-family: 'Inter', sans-serif;
       --modal-z-index: 100;
@@ -120,17 +127,13 @@ export class WinnerModal extends LitElement {
     }
   `;
 
-  constructor() {
-    super();
-    this.show = false;
-    this.winnerName = 'Desconocido';
-    this.winnerAvatar = 'https://placehold.co/100x100/cccccc/ffffff?text=Avatar';
-    this.titleText = '¡Felicidades!';
-    this.winnerLabel = 'El ganador es:';
-  }
+    constructor() {
+        super();
+        // Default values are already assigned with types above
+    }
 
-  render() {
-    return html`
+    render() {
+        return html`
       <div class="modal-overlay" part="overlay">
         <div class="modal-content" part="content">
           <span class="close-button" part="close-button" aria-label="Cerrar modal" @click=${this.closeModal}>&times;</span>
@@ -142,29 +145,29 @@ export class WinnerModal extends LitElement {
         </div>
       </div>
     `;
-  }
+    }
 
-  _handleImageError() {
-    this.winnerAvatar = 'https://placehold.co/100x100/cccccc/ffffff?text=Error';
-  }
+    _handleImageError(): void {
+        this.winnerAvatar = 'https://placehold.co/100x100/cccccc/ffffff?text=Error';
+    }
 
-  openModal() {
-    this.show = true;
-    this.dispatchEvent(new CustomEvent('opened'));
-  }
+    openModal(): void {
+        this.show = true;
+        this.dispatchEvent(new CustomEvent('opened'));
+    }
 
-  closeModal() {
-    this.show = false;
-    this.dispatchEvent(new CustomEvent('closed'));
-  }
+    closeModal(): void {
+        this.show = false;
+        this.dispatchEvent(new CustomEvent('closed'));
+    }
 
-  setWinnerInfo(name, avatarUrl, title = '¡Felicidades!', label = 'El ganador es:') {
-    this.winnerName = name;
-    this.winnerAvatar = avatarUrl;
-    this.titleText = title;
-    this.winnerLabel = label;
-    this.requestUpdate();
-  }
+    setWinnerInfo(name: string, avatarUrl: string, title: string = '¡Felicidades!', label: string = 'El ganador es:'): void {
+        this.winnerName = name;
+        this.winnerAvatar = avatarUrl;
+        this.titleText = title;
+        this.winnerLabel = label;
+        this.requestUpdate();
+    }
 }
 
 customElements.define('winner-modal', WinnerModal); 
