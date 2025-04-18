@@ -14,17 +14,15 @@ export default {
 
 const Template = (args) => {
   const modal = document.createElement('winner-modal');
-  Object.keys(args).forEach(key => {
-    if (key === 'show') {
-      if (args[key]) {
-        modal.setAttribute('show', '');
-      } else {
-        modal.removeAttribute('show');
-      }
-    } else {
-      modal.setAttribute(key, args[key]);
-    }
-  });
+  modal.setWinnerInfo(
+    args.winnerName,
+    args.winnerAvatar,
+    args.titleText,
+    args.winnerLabel
+  );
+  if (args.show) {
+    modal.setAttribute('show', '');
+  }
   return modal;
 };
 
@@ -61,10 +59,12 @@ const InteractiveTemplate = () => {
   button.style.marginBottom = '20px';
   
   const modal = document.createElement('winner-modal');
-  modal.setAttribute('winner-name', 'Ana Martínez');
-  modal.setAttribute('winner-avatar', 'https://placehold.co/100x100/4ECDC4/ffffff?text=AM');
-  modal.setAttribute('title-text', '¡Felicidades!');
-  modal.setAttribute('winner-label', 'El ganador es:');
+  modal.setWinnerInfo(
+    'Ana Martínez',
+    'https://placehold.co/100x100/4ECDC4/ffffff?text=AM',
+    '¡Felicidades!',
+    'El ganador es:'
+  );
   
   button.addEventListener('click', () => {
     modal.openModal();

@@ -163,6 +163,7 @@ export class WinnerModal extends LitElement {
     this.winnerAvatar = avatarUrl;
     this.titleText = title;
     this.winnerLabel = label;
+    this.requestUpdate();
   }
 }
 
