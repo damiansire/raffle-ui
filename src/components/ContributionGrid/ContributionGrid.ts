@@ -218,13 +218,17 @@ export class ContributionGrid extends LitElement {
             litColorClass = `lit-color-${this._litColorIndex + 1}`;
         }
 
-        return classMap({
+        const classes = {
             'contribution-square': true,
             [contributionClass]: !isLit && !isWinner,
             'lit': isLit && !isWinner,
             [litColorClass]: isLit && !isWinner,
             'winner-square': isWinner,
-        });
+        };
+        return Object.entries(classes)
+            .filter(([_, value]) => value)
+            .map(([key]) => key)
+            .join(' ');
     }
 }
 
