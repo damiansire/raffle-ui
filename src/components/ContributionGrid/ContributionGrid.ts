@@ -117,9 +117,28 @@ export class ContributionGrid extends LitElement {
     render() {
         return html`
             <div class="grid-container" style="${this._gridColumnsStyle}">
-                ${repeat(this.participants, (participant) => participant.id, (participant) => html`
-                    <div class="${this._getSquareClasses(participant)}"></div>
-                `)}
+                ${repeat(this.participants, (participant) => participant.id, (participant) => {
+            const isLit = participant.id === this._litSquareId;
+            const isWinner = participant.id === this._winnerSquareId;
+            let contributionClass = 'level-0';
+            if (participant.contributionLevel !== undefined && participant.contributionLevel >= 0 && participant.contributionLevel <= 4) {
+                contributionClass = `level-${participant.contributionLevel}`;
+            }
+            let litColorClass = '';
+            if (isLit) {
+                litColorClass = `lit-color-${this._litColorIndex + 1}`;
+            }
+
+            const squareClasses = {
+                'contribution-square': true,
+                [contributionClass]: !isLit && !isWinner,
+                'lit': isLit && !isWinner,
+                [litColorClass]: isLit && !isWinner,
+                'winner-square': isWinner,
+            };
+
+            return html`<div class="${classMap(squareClasses)}"></div>`;
+        })}
             </div>
         `;
     }
@@ -203,32 +222,6 @@ export class ContributionGrid extends LitElement {
     private _resetSelectionState(): void {
         this._litSquareId = null;
         this._winnerSquareId = null;
-    }
-
-    private _getSquareClasses(participant: Participant): string {
-        const isLit = participant.id === this._litSquareId;
-        const isWinner = participant.id === this._winnerSquareId;
-        let contributionClass = 'level-0';
-        if (participant.contributionLevel !== undefined && participant.contributionLevel >= 0 && participant.contributionLevel <= 4) {
-            contributionClass = `level-${participant.contributionLevel}`;
-        }
-
-        let litColorClass = '';
-        if (isLit) {
-            litColorClass = `lit-color-${this._litColorIndex + 1}`;
-        }
-
-        const classes = {
-            'contribution-square': true,
-            [contributionClass]: !isLit && !isWinner,
-            'lit': isLit && !isWinner,
-            [litColorClass]: isLit && !isWinner,
-            'winner-square': isWinner,
-        };
-        return Object.entries(classes)
-            .filter(([_, value]) => value)
-            .map(([key]) => key)
-            .join(' ');
     }
 }
 
