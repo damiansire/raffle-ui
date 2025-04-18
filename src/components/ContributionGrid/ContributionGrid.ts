@@ -2,6 +2,11 @@ import { LitElement, html, css } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import { classMap } from 'lit/directives/class-map.js';
 
+interface Participant {
+    id: string;
+    contributionLevel?: number;
+}
+
 export class ContributionGrid extends LitElement {
     static properties = {
         participants: { type: Array },
@@ -14,6 +19,18 @@ export class ContributionGrid extends LitElement {
         _litColorIndex: { state: true },
         _gridColumnsStyle: { state: true }
     };
+
+    participants: Participant[] = [];
+    columns: number = 20;
+    illuminationDuration: number = 3000;
+    illuminationInterval: number = 100;
+    _litSquareId: string | null = null;
+    _winnerSquareId: string | null = null;
+    _isSelecting: boolean = false;
+    _litColorIndex: number = 0;
+    _animationIntervalId: number | null = null;
+    _animationTimeoutId: number | null = null;
+    _gridColumnsStyle: string = '';
 
     static styles = css`
         :host {
@@ -88,20 +105,10 @@ export class ContributionGrid extends LitElement {
 
     constructor() {
         super();
-        this.participants = [];
-        this.columns = 20;
-        this.illuminationDuration = 3000;
-        this.illuminationInterval = 100;
-        this._litSquareId = null;
-        this._winnerSquareId = null;
-        this._isSelecting = false;
-        this._litColorIndex = 0;
-        this._animationIntervalId = null;
-        this._animationTimeoutId = null;
         this._updateGridColumnsStyle();
     }
 
-    willUpdate(changedProperties) {
+    willUpdate(changedProperties: Map<string, any>) {
         if (changedProperties.has('columns')) {
             this._updateGridColumnsStyle();
         }
@@ -117,7 +124,7 @@ export class ContributionGrid extends LitElement {
         `;
     }
 
-    async startSelectionAnimation() {
+    async startSelectionAnimation(): Promise<Participant | null> {
         if (this._isSelecting || this.participants.length === 0) {
             console.warn("Selección ya en curso o no hay participantes.");
             return null;
@@ -131,10 +138,10 @@ export class ContributionGrid extends LitElement {
             const totalSteps = Math.floor(this.illuminationDuration / this.illuminationInterval);
             let currentStep = 0;
 
-            clearInterval(this._animationIntervalId);
-            clearTimeout(this._animationTimeoutId);
+            clearInterval(this._animationIntervalId as number);
+            clearTimeout(this._animationTimeoutId as number);
 
-            this._animationIntervalId = setInterval(() => {
+            this._animationIntervalId = window.setInterval(() => {
                 if (currentStep >= totalSteps) {
                     this._selectFinalWinner(resolve);
                     return;
@@ -143,7 +150,7 @@ export class ContributionGrid extends LitElement {
                 currentStep++;
             }, this.illuminationInterval);
 
-            this._animationTimeoutId = setTimeout(() => {
+            this._animationTimeoutId = window.setTimeout(() => {
                 this._selectFinalWinner(resolve);
             }, this.illuminationDuration);
 
@@ -151,20 +158,20 @@ export class ContributionGrid extends LitElement {
         });
     }
 
-    _updateGridColumnsStyle() {
+    private _updateGridColumnsStyle(): void {
         this._gridColumnsStyle = `grid-template-columns: repeat(${this.columns}, minmax(0, 1fr));`;
     }
 
-    _illuminateRandomSquare() {
+    private _illuminateRandomSquare(): void {
         if (this.participants.length === 0) return;
         this._litSquareId = this.participants[Math.floor(Math.random() * this.participants.length)].id;
         this._litColorIndex = Math.floor(Math.random() * 4);
         this.requestUpdate();
     }
 
-    _selectFinalWinner(resolvePromise) {
-        clearInterval(this._animationIntervalId);
-        clearTimeout(this._animationTimeoutId);
+    private _selectFinalWinner(resolvePromise: (value: Participant | null) => void): void {
+        clearInterval(this._animationIntervalId as number);
+        clearTimeout(this._animationTimeoutId as number);
         this._animationIntervalId = null;
         this._animationTimeoutId = null;
 
@@ -193,12 +200,12 @@ export class ContributionGrid extends LitElement {
         resolvePromise(winner);
     }
 
-    _resetSelectionState() {
+    private _resetSelectionState(): void {
         this._litSquareId = null;
         this._winnerSquareId = null;
     }
 
-    _getSquareClasses(participant) {
+    private _getSquareClasses(participant: Participant): string {
         const isLit = participant.id === this._litSquareId;
         const isWinner = participant.id === this._winnerSquareId;
         let contributionClass = 'level-0';
