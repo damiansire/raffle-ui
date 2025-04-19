@@ -12,8 +12,17 @@ function toKebabCase(str) {
     .toLowerCase(); // convert to lower case
 }
 
+// --- Helper para convertir a PascalCase (maneja kebab-case) ---
+function toPascalCase(str) {
+  if (!str) return '';
+  return str
+    .split('-') // Divide por guiones
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitaliza cada parte
+    .join(''); // Une las partes
+}
+
 // --- Obtener nombre del componente del argumento ---
-const componentName = process.argv[2];
+let componentName = process.argv[2]; // Cambiado a let para poder reasignar
 
 if (!componentName) {
   console.error('❌ Error: Por favor, proporciona un nombre para el componente.');
@@ -21,12 +30,13 @@ if (!componentName) {
   process.exit(1);
 }
 
-// Validar que sea PascalCase (simplificado)
-if (!/^[A-Z][A-Za-z0-9]*$/.test(componentName)) {
-    console.error(`❌ Error: El nombre del componente "${componentName}" debe estar en PascalCase (ej. MiComponente).`);
-    process.exit(1);
+// Validar y convertir a PascalCase si es necesario
+const pascalCaseRegex = /^[A-Z][A-Za-z0-9]*$/;
+if (!pascalCaseRegex.test(componentName)) {
+    const originalName = componentName;
+    componentName = toPascalCase(originalName);
+    console.warn(`⚠️  Advertencia: El nombre "${originalName}" no estaba en PascalCase. Se ha convertido a "${componentName}".`);
 }
-
 
 const tagName = toKebabCase(componentName);
 const componentDir = path.join('src', 'components', componentName);
