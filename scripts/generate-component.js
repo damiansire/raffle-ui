@@ -188,10 +188,94 @@ try {
   fs.writeFileSync(storyFile, storyTemplate);
   console.log(`✅ Creado archivo de historias: ${storyFile}`);
 
+  // --- Agregar importación y exportación ordenada a src/index.ts ---
+  const indexFile = path.join('src', 'index.ts');
+  const importLine = `import './components/${componentName}/${componentName}.ts';`;
+  const exportLine = `export { ${componentName} } from './components/${componentName}/${componentName}.js'; // Asegúrate que la extensión .js sea la correcta para tu build`;
+
+  try {
+    if (!fs.existsSync(indexFile)) {
+      // Si el archivo no existe, lo creamos con el import y export
+      const initialContent = `${importLine}\n${exportLine}\n`;
+      fs.writeFileSync(indexFile, initialContent);
+      console.log(`✅ Creado ${indexFile} y añadidas importación y exportación.`);
+    } else {
+      // Si el archivo existe, leemos, modificamos y escribimos
+      const content = fs.readFileSync(indexFile, 'utf-8');
+      const lines = content.split('\n');
+
+      let lastImportIndex = -1;
+      let firstExportIndex = -1;
+      let lastExportIndex = -1; // Necesitamos saber dónde insertar el nuevo export
+
+      lines.forEach((line, index) => {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('import')) {
+          lastImportIndex = index;
+        } else if (trimmedLine.startsWith('export')) {
+          if (firstExportIndex === -1) {
+            firstExportIndex = index;
+          }
+          lastExportIndex = index;
+        }
+      });
+
+      // Insertar la línea de importación
+      // Después del último import, o al principio si no hay imports
+      const importInsertionPoint = lastImportIndex + 1;
+      lines.splice(importInsertionPoint, 0, importLine);
+
+      // Ajustar los índices de exportación si el import se insertó antes
+      if (firstExportIndex !== -1 && importInsertionPoint <= firstExportIndex) {
+        firstExportIndex++;
+        lastExportIndex++;
+      }
+      if (lastExportIndex !== -1 && importInsertionPoint <= lastExportIndex) {
+         // El lastExportIndex también se desplaza si el import va antes
+      }
+
+
+      // Insertar la línea de exportación
+      // Después del último export, o después del último import si no hay exports,
+      // o después del nuevo import si no había nada más.
+      let exportInsertionPoint;
+      if (lastExportIndex !== -1) {
+        exportInsertionPoint = lastExportIndex + 1; // Después del último export existente
+      } else if (lastImportIndex !== -1) {
+         // +1 por la línea insertada de import, +1 para insertar después
+        exportInsertionPoint = lastImportIndex + 2; // Después del import recién insertado
+      } else {
+        exportInsertionPoint = 1; // Después del import insertado en la línea 0
+      }
+
+      // Asegurarnos de que haya un espacio si insertamos entre imports y exports
+      if (lastImportIndex !== -1 && firstExportIndex !== -1 && exportInsertionPoint === firstExportIndex) {
+          // Si estamos insertando justo antes del primer export y después de un import,
+          // podríamos necesitar un espacio.
+          // Sin embargo, la lógica actual inserta *después* del último export o import.
+          // Considerar añadir una línea en blanco si es necesario estéticamente.
+          // Por simplicidad ahora, no añadiremos líneas en blanco automáticas.
+      }
+
+      lines.splice(exportInsertionPoint, 0, exportLine);
+
+      // Eliminar líneas en blanco duplicadas al final si existen
+      while (lines.length > 0 && lines[lines.length - 1].trim() === '') {
+        lines.pop();
+      }
+
+      const newContent = lines.join('\n') + '\n'; // Asegurar una nueva línea al final
+      fs.writeFileSync(indexFile, newContent, 'utf-8');
+      console.log(`✅ Actualizado ${indexFile} con la nueva importación y exportación ordenadas.`);
+    }
+  } catch (updateError) {
+    console.error(`❌ Error al actualizar ${indexFile}:`, updateError);
+  }
+
   console.log(`\n🎉 ¡Componente ${componentName} generado exitosamente!`);
   console.log(`\n🚀 Pasos siguientes:`);
   console.log(`   1. Revisa y ajusta el código en ${componentDir}`);
-  console.log(`   2. Importa y exporta tu componente desde src/index.ts`);
+  console.log(`   2. Verifica la importación y exportación automáticas en src/index.ts.`);
   console.log(`   3. Ejecuta 'npm run storybook' para verlo en acción.`);
 
 } catch (error) {
