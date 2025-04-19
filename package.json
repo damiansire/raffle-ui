@@ -1,26 +1,52 @@
 {
   "name": "raffle-ui",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Placeholder: Describe tu librería aquí",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "author": "",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "placeholder",
+    "web-components",
+    "lit"
+  ],
+  "author": "Tu Nombre <tu.email@ejemplo.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tu_usuario/tu_repo.git"
+  },
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
+  "dependencies": {
+    "lit": "^3.3.0"
+  },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.6",
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/blocks": "^8.6.12",
     "@storybook/experimental-addon-test": "^8.6.12",
     "@storybook/test": "^8.6.12",
     "@storybook/web-components": "^8.6.12",
     "@storybook/web-components-vite": "^8.6.12",
-    "lit": "^3.3.0",
-    "storybook": "^8.6.12"
+    "rollup": "^4.20.0",
+    "storybook": "^8.6.12",
+    "tslib": "^2.6.3",
+    "typescript": "^5.5.4",
+    "@rollup/plugin-terser": "^0.4.4"
   }
 }
