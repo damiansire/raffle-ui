@@ -11,7 +11,8 @@
     "build-storybook": "storybook build",
     "build": "rollup -c",
     "prepublishOnly": "npm run build",
-    "generate:component": "node scripts/generate-component.js"
+    "generate:component": "node scripts/generate-component.js",
+    "ng": "npm run generate:component"
   },
   "files": [
     "dist",
