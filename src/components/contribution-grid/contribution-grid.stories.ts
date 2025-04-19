@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { ContributionGrid } from './ContributionGrid';
+import { ContributionGrid } from './contribution-grid';
 // Import the function from the JS file (make sure your build setup allows this)
 function generateDemoParticipants(count = 200) {
     const names = ["Ana", "Luis", "Carlos", "Maria", "Juan", "Elena", "Pedro", "Sofia", "Miguel", "Lucia"];

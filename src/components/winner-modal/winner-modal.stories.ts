@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { WinnerModal } from './WinnerModal'; // Import from the .ts file
+import { WinnerModal } from './winner-modal'; // Import from the .ts file
 
 // Register the custom element if it's not already registered globally
 if (!customElements.get('winner-modal')) {
